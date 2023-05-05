@@ -1,0 +1,36 @@
+vocabulary V {
+    type Row 
+    type Column
+    type Value
+
+    rowVisibleLeft:Row -> Value
+    rowVisibleRight:Row -> Value
+
+    columnVisibleTop:Column -> Value
+    columnVisibleBottom:Column -> Value
+
+
+    skyScraper:(Row * Column) -> Value
+}
+
+theory T:V {
+    
+}
+
+structure S:V {
+    Row := {r1, r2, r3, r4}.
+    Column := {c1, c2, c3, c4}.
+    Value := {0..4}.
+
+    rowVisibleLeft := { r1 -> 1, r2 -> 3, r3 -> 2, r4 -> 4}.
+    rowVisibleRight := { r1 -> 1, r2 -> 2, r3 -> 2, r4 -> 2}.
+
+    columnVisibleTop := { c1 -> 3, c2 -> 2, c3 -> 2, c4 -> 1}.
+    columnVisibleBottom := { c1 -> 1, c2 -> 3, c3 -> 2, c4 -> 2}.
+}
+
+procedure main() {
+    pretty_print(model_expand(T, S))
+}
+
+
