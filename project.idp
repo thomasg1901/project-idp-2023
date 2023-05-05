@@ -9,6 +9,8 @@ vocabulary V {
     columnVisibleTop:Column -> Value
     columnVisibleBottom:Column -> Value
 
+    rowIndex: Row -> Value
+    columnIndex: Column -> Value
 
     valueOf:(Row * Column) -> Value
 }
@@ -17,14 +19,23 @@ theory T:V {
     // In every row/column, each cell must have a different value
     !r in Row: ~(?c1, c2 in Column: valueOf(r, c1) = valueOf(r, c2) & c1 ~= c2).
     !c in Column: ~(?r1, r2 in Row: valueOf(r1, c) = valueOf(r2, c) & r1 ~= r2).
+    // check row vissible Left/Right 
+    !r in Row: #{ c in Column: (!x in Column: columnIndex(x) < columnIndex(c) => valueOf(r, x) < valueOf(r, c))} = rowVisibleLeft(r).
+    !r in Row: #{c in Column: (!x in Column: columnIndex(x) > columnIndex(c) => valueOf(r, x) < valueOf(r, c))} = rowVisibleRight(r).
+    // check column vissible Top/Bottom
+    !c in Column: #{r in Row: (!x in Row: rowIndex(x) < rowIndex(r) => valueOf(x, c) < valueOf(r, c))} = columnVisibleTop(c).
+    !c in Column: #{r in Row: (!x in Row: rowIndex(x) > rowIndex(r) => valueOf(x, c) < valueOf(r, c))} = columnVisibleBottom(c).
+
 }
 
 structure S:V {
     Row := {r1, r2, r3, r4}.
+    rowIndex := {r1 -> 1, r2 -> 2, r3 -> 3, r4 -> 4}.
     Column := {c1, c2, c3, c4}.
+    columnIndex := {c1 -> 1,  c2 -> 2, c3 -> 3, c4 -> 4}.
     Value := {1..4}.
 
-    rowVisibleLeft := { r1 -> 1, r2 -> 3, r3 -> 2, r4 -> 4}.
+    rowVisibleLeft := { r1 -> 4, r2 -> 2, r3 -> 3, r4 -> 1}.
     rowVisibleRight := { r1 -> 1, r2 -> 2, r3 -> 2, r4 -> 2}.
 
     columnVisibleTop := { c1 -> 3, c2 -> 2, c3 -> 2, c4 -> 1}.
@@ -34,3 +45,4 @@ structure S:V {
 procedure main() {
     pretty_print(model_expand(T, S))
 }
+
