@@ -10,17 +10,19 @@ vocabulary V {
     columnVisibleBottom:Column -> Value
 
 
-    skyScraper:(Row * Column) -> Value
+    valueOf:(Row * Column) -> Value
 }
 
 theory T:V {
-    
+    // In every row/column, each cell must have a different value
+    !r in Row: ~(?c1, c2 in Column: valueOf(r, c1) = valueOf(r, c2) & c1 ~= c2).
+    !c in Column: ~(?r1, r2 in Row: valueOf(r1, c) = valueOf(r2, c) & r1 ~= r2).
 }
 
 structure S:V {
     Row := {r1, r2, r3, r4}.
     Column := {c1, c2, c3, c4}.
-    Value := {0..4}.
+    Value := {1..4}.
 
     rowVisibleLeft := { r1 -> 1, r2 -> 3, r3 -> 2, r4 -> 4}.
     rowVisibleRight := { r1 -> 1, r2 -> 2, r3 -> 2, r4 -> 2}.
@@ -32,5 +34,3 @@ structure S:V {
 procedure main() {
     pretty_print(model_expand(T, S))
 }
-
-
